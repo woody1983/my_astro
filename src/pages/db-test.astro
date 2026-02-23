@@ -111,19 +111,17 @@ import Layout from '../layouts/Layout.astro';
       const data = await response.json();
       
       if (data.success && data.users.length > 0) {
-        container.innerHTML = `
-          <div class="tech-list">
-            ${data.users.map((user, index) => `
-              <div class="tech-item">
-                <span class="tech-icon">${userEmojis[index % userEmojis.length]}</span>
-                <div class="tech-info">
-                  <div class="tech-name">${user.name}</div>
-                  <div class="tech-desc">${user.email}</div>
-                </div>
-              </div>
-            `).join('')}
-          </div>
-        `;
+        let html = '<div class="tech-list">';
+        data.users.forEach((user, index) => {
+          html += '<div class="tech-item">';
+          html += '<span class="tech-icon">' + userEmojis[index % userEmojis.length] + '</span>';
+          html += '<div class="tech-info">';
+          html += '<div class="tech-name">' + user.name + '</div>';
+          html += '<div class="tech-desc">' + user.email + '</div>';
+          html += '</div></div>';
+        });
+        html += '</div>';
+        container.innerHTML = html;
       } else {
         container.innerHTML = '<div class="empty-box"><span class="empty-emoji">👤</span><p>No users found</p></div>';
       }
