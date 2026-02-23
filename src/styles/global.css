@@ -1,7 +1,3 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 /* Glass Card */
 .glass-card {
   position: relative;
@@ -168,4 +164,55 @@
     transform: translateX(100%) translateY(100%) rotate(45deg);
     opacity: 0;
   }
+}
+
+/* Background gradient for page */
+.bg-gradient-to-br {
+  background: linear-gradient(to bottom right, #1e1b4b, #581c87, #831843);
+}
+
+.min-h-screen {
+  min-height: 100vh;
+}
+
+.flex {
+  display: flex;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.p-8 {
+  padding: 2rem;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.gap-8 {
+  gap: 2rem;
+}
+
+.w-full {
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .md\:flex-row {
+    flex-direction: row;
+  }
+}
+
+.max-w-6xl {
+  max-width: 72rem;
+}
+
+.flex-1 {
+  flex: 1;
 }
