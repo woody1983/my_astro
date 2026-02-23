@@ -1,0 +1,10 @@
+INSERT INTO "posts" VALUES(1,'My First Blog Post','This is Alice''s first test post. Welcome to Astro + D1!',1,1707004800000);
+INSERT INTO "posts" VALUES(2,'D1 Database Experience','D1 is Cloudflare''s edge SQLite database with great performance.',2,1707091200000);
+INSERT INTO "posts" VALUES(3,'Introduction to Astro','Astro is a fast content-driven web framework with Islands architecture.',1,1707177600000);
+INSERT INTO "posts" VALUES(4,'The Future of Edge Computing','Edge computing brings applications closer to users with lower latency.',3,1707264000000);
+INSERT INTO "users" VALUES(1,'Alice Johnson','alice@example.com',1706745600000);
+INSERT INTO "users" VALUES(2,'Bob Smith','bob@example.com',1706832000000);
+INSERT INTO "users" VALUES(3,'Charlie Brown','charlie@example.com',1706918400000);
+INSERT INTO "users" VALUES(4,'Jiang Xu','jiang@example.com',1706735600000);
+INSERT INTO "sqlite_sequence" VALUES('users',4);
+INSERT INTO "sqlite_sequence" VALUES('posts',4);
