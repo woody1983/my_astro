@@ -1,12 +1,23 @@
 import type { APIRoute } from 'astro';
-import { getDb } from '../../db';
-import { posts } from '../../db/schema';
+import { drizzle } from 'drizzle-orm/d1';
+import * as schema from '../../db/schema';
 
-export const GET: APIRoute = async ({ locals }) => {
+export const GET: APIRoute = async (context) => {
   try {
-    const { env } = locals.runtime;
-    const db = getDb(env.my_astro_db);
-    const allPosts = await db.select().from(posts).all();
+    const env = context.locals.runtime?.env || (context as any).env;
+    
+    if (!env?.my_astro_db) {
+      return new Response(JSON.stringify({
+        success: false,
+        message: 'Database binding not found'
+      }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+    
+    const db = drizzle(env.my_astro_db, { schema });
+    const allPosts = await db.select().from(schema.posts).all();
 
     return new Response(JSON.stringify({
       success: true,
