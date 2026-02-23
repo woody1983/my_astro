@@ -8,7 +8,7 @@ declare global {
     interface Locals {
       runtime: {
         env: {
-          my_astro_db: D1Database;
+          DB: D1Database;
         };
       };
     }

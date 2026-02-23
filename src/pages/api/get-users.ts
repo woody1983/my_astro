@@ -4,21 +4,20 @@ import * as schema from '../../db/schema';
 
 export const GET: APIRoute = async (context) => {
   try {
-    // 在 Cloudflare Pages 中，env 在 context.locals.runtime.env 中
-    // 但 wrangler dev 可能直接注入到 context.env
+    // 从 runtime.env 获取 DB，无论本地还是线上都通过这里
     const env = context.locals.runtime?.env || (context as any).env;
     
-    if (!env?.my_astro_db) {
+    if (!env?.DB) {
       return new Response(JSON.stringify({
         success: false,
-        message: 'Database binding not found. Available env: ' + JSON.stringify(Object.keys(env || {}))
+        message: 'DB binding not found in env'
       }), {
         status: 500,
         headers: { 'Content-Type': 'application/json' }
       });
     }
     
-    const db = drizzle(env.my_astro_db, { schema });
+    const db = drizzle(env.DB, { schema });
     const allUsers = await db.select().from(schema.users).all();
 
     return new Response(JSON.stringify({

@@ -2,13 +2,19 @@
 import { defineConfig } from 'astro/config';
 import cloudflare from '@astrojs/cloudflare';
 
+// 根据环境选择配置文件
+const isProd = process.env.NODE_ENV === 'production';
+const configPath = isProd 
+  ? './.wrangler/wrangler.prod.jsonc'
+  : './.wrangler/wrangler.local.jsonc';
+
 // https://astro.build/config
 export default defineConfig({
   output: 'server',
   adapter: cloudflare({
     platformProxy: {
       enabled: true,
-      configPath: './wrangler.jsonc',
+      configPath: configPath,
     },
   }),
 });
