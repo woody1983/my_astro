@@ -112,13 +112,13 @@ import Layout from '../layouts/Layout.astro';
       
       if (data.success && data.users.length > 0) {
         container.innerHTML = `
-          <div class="item-list">
+          <div class="tech-list">
             ${data.users.map((user, index) => `
-              <div class="item-box">
-                <span class="item-icon">${userEmojis[index % userEmojis.length]}</span>
-                <div class="item-details">
-                  <div class="item-primary">${user.name}</div>
-                  <div class="item-secondary">${user.email}</div>
+              <div class="tech-item">
+                <span class="tech-icon">${userEmojis[index % userEmojis.length]}</span>
+                <div class="tech-info">
+                  <div class="tech-name">${user.name}</div>
+                  <div class="tech-desc">${user.email}</div>
                 </div>
               </div>
             `).join('')}
@@ -142,13 +142,13 @@ import Layout from '../layouts/Layout.astro';
       
       if (data.success && data.posts.length > 0) {
         container.innerHTML = `
-          <div class="item-list">
+          <div class="tech-list">
             ${data.posts.map((post, index) => `
-              <div class="item-box">
-                <span class="item-icon">${postEmojis[index % postEmojis.length]}</span>
-                <div class="item-details">
-                  <div class="item-primary">${post.title}</div>
-                  <div class="item-secondary">By Author #${post.authorId}</div>
+              <div class="tech-item">
+                <span class="tech-icon">${postEmojis[index % postEmojis.length]}</span>
+                <div class="tech-info">
+                  <div class="tech-name">${post.title}</div>
+                  <div class="tech-desc">By Author #${post.authorId}</div>
                 </div>
               </div>
             `).join('')}
@@ -253,14 +253,14 @@ import Layout from '../layouts/Layout.astro';
     border-radius: 3px;
   }
 
-  /* Item List - Same as Tech List */
-  .item-list, .tech-list {
+  /* Tech List Styles - Used by Users, Posts, and Tech Stack */
+  .tech-list {
     display: flex;
     flex-direction: column;
     gap: 0.875rem;
   }
 
-  .item-box, .tech-item {
+  .tech-item {
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -271,29 +271,29 @@ import Layout from '../layouts/Layout.astro';
     transition: all 0.3s ease;
   }
 
-  .item-box:hover, .tech-item:hover {
+  .tech-item:hover {
     background: rgba(255, 255, 255, 0.08);
     border-color: rgba(255, 255, 255, 0.15);
     transform: translateX(4px);
   }
 
-  .item-icon, .tech-icon {
+  .tech-icon {
     font-size: 1.5rem;
     flex-shrink: 0;
   }
 
-  .item-details, .tech-info {
+  .tech-info {
     flex: 1;
   }
 
-  .item-primary, .tech-name {
+  .tech-name {
     font-size: 1rem;
     font-weight: 700;
     color: white;
     margin-bottom: 0.125rem;
   }
 
-  .item-secondary, .tech-desc {
+  .tech-desc {
     font-size: 0.8rem;
     color: rgba(255, 255, 255, 0.5);
     font-weight: 500;
