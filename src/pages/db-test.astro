@@ -4,7 +4,7 @@ import Layout from '../layouts/Layout.astro';
 
 <Layout title="D1 Database Test Page">
   <div class="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 flex items-center justify-center p-8">
-    <div class="flex flex-col md:flex-row gap-8 max-w-5xl w-full">
+    <div class="flex flex-col md:flex-row gap-8 max-w-6xl w-full">
       
       <!-- Users Card -->
       <div class="glass-card breathing flex-1">
@@ -27,6 +27,57 @@ import Layout from '../layouts/Layout.astro';
         <div class="card-body">
           <div id="posts-container">
             <p class="loading">Loading posts...</p>
+          </div>
+        </div>
+        <div class="shine"></div>
+      </div>
+
+      <!-- Tech Stack Card -->
+      <div class="glass-card breathing flex-1" style="animation-delay: 3s">
+        <div class="card-header">
+          <h2 class="card-title">Tech Stack</h2>
+        </div>
+        <div class="card-body">
+          <div class="tech-list">
+            <div class="tech-item">
+              <span class="tech-icon">🚀</span>
+              <div class="tech-info">
+                <div class="tech-name">Astro</div>
+                <div class="tech-desc">Web Framework</div>
+              </div>
+            </div>
+            
+            <div class="tech-item">
+              <span class="tech-icon">⚡</span>
+              <div class="tech-info">
+                <div class="tech-name">Tailwind CSS</div>
+                <div class="tech-desc">Styling</div>
+              </div>
+            </div>
+            
+            <div class="tech-item">
+              <span class="tech-icon">🗄️</span>
+              <div class="tech-info">
+                <div class="tech-name">Drizzle ORM</div>
+                <div class="tech-desc">Database</div>
+              </div>
+            </div>
+            
+            <div class="tech-item">
+              <span class="tech-icon">☁️</span>
+              <div class="tech-info">
+                <div class="tech-name">Cloudflare D1</div>
+                <div class="tech-desc">Edge Database</div>
+              </div>
+            </div>
+            
+            <div class="tech-item">
+              <span class="tech-icon">📦</span>
+              <div class="tech-info">
+                <div class="tech-name">TypeScript</div>
+                <div class="tech-desc">Language</div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="shine"></div>
@@ -97,7 +148,6 @@ import Layout from '../layouts/Layout.astro';
 </script>
 
 <style>
-  /* Glass Card */
   .glass-card {
     position: relative;
     background: rgba(255, 255, 255, 0.1);
@@ -114,7 +164,6 @@ import Layout from '../layouts/Layout.astro';
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   }
 
-  /* Breathing Animation */
   .breathing {
     animation: breathe 3s ease-in-out infinite;
   }
@@ -132,7 +181,6 @@ import Layout from '../layouts/Layout.astro';
     }
   }
 
-  /* Card Header */
   .card-header {
     padding: 1.5rem 1.5rem 0.5rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -145,14 +193,12 @@ import Layout from '../layouts/Layout.astro';
     text-align: center;
   }
 
-  /* Card Body */
   .card-body {
     padding: 1rem 1.5rem 1.5rem;
     max-height: 400px;
     overflow-y: auto;
   }
 
-  /* List Styles */
   .item-list {
     list-style: none;
     padding: 0;
@@ -214,7 +260,6 @@ import Layout from '../layouts/Layout.astro';
     text-overflow: ellipsis;
   }
 
-  /* States */
   .loading, .empty {
     color: rgba(255, 255, 255, 0.5);
     text-align: center;
@@ -228,7 +273,6 @@ import Layout from '../layouts/Layout.astro';
     padding: 2rem;
   }
 
-  /* Shine Effect */
   .shine {
     position: absolute;
     top: -50%;
@@ -261,5 +305,48 @@ import Layout from '../layouts/Layout.astro';
       transform: translateX(100%) translateY(100%) rotate(45deg);
       opacity: 0;
     }
+  }
+
+  /* Tech Stack Styles */
+  .tech-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .tech-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.2s ease;
+  }
+
+  .tech-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px);
+  }
+
+  .tech-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  .tech-info {
+    flex: 1;
+  }
+
+  .tech-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+  }
+
+  .tech-desc {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
   }
 </style>
