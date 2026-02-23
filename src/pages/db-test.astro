@@ -254,13 +254,13 @@ import Layout from '../layouts/Layout.astro';
   }
 
   /* Item List - Same as Tech List */
-  .item-list {
+  .item-list, .tech-list {
     display: flex;
     flex-direction: column;
     gap: 0.875rem;
   }
 
-  .item-box {
+  .item-box, .tech-item {
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -271,29 +271,29 @@ import Layout from '../layouts/Layout.astro';
     transition: all 0.3s ease;
   }
 
-  .item-box:hover {
+  .item-box:hover, .tech-item:hover {
     background: rgba(255, 255, 255, 0.08);
     border-color: rgba(255, 255, 255, 0.15);
     transform: translateX(4px);
   }
 
-  .item-icon {
+  .item-icon, .tech-icon {
     font-size: 1.5rem;
     flex-shrink: 0;
   }
 
-  .item-details {
+  .item-details, .tech-info {
     flex: 1;
   }
 
-  .item-primary {
+  .item-primary, .tech-name {
     font-size: 1rem;
     font-weight: 700;
     color: white;
     margin-bottom: 0.125rem;
   }
 
-  .item-secondary {
+  .item-secondary, .tech-desc {
     font-size: 0.8rem;
     color: rgba(255, 255, 255, 0.5);
     font-weight: 500;
