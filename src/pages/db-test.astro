@@ -10,10 +10,15 @@ import Layout from '../layouts/Layout.astro';
       <div class="glass-card breathing flex-1">
         <div class="card-header">
           <h2 class="card-title">Users List</h2>
+          <p class="card-subtitle">Registered members</p>
         </div>
         <div class="card-body">
           <div id="users-container">
-            <p class="loading">Loading users...</p>
+            <div class="skeleton-list">
+              <div class="skeleton-item"></div>
+              <div class="skeleton-item"></div>
+              <div class="skeleton-item"></div>
+            </div>
           </div>
         </div>
         <div class="shine"></div>
@@ -23,10 +28,15 @@ import Layout from '../layouts/Layout.astro';
       <div class="glass-card breathing flex-1" style="animation-delay: 1.5s">
         <div class="card-header">
           <h2 class="card-title">Posts List</h2>
+          <p class="card-subtitle">Latest articles</p>
         </div>
         <div class="card-body">
           <div id="posts-container">
-            <p class="loading">Loading posts...</p>
+            <div class="skeleton-list">
+              <div class="skeleton-item"></div>
+              <div class="skeleton-item"></div>
+              <div class="skeleton-item"></div>
+            </div>
           </div>
         </div>
         <div class="shine"></div>
@@ -36,6 +46,7 @@ import Layout from '../layouts/Layout.astro';
       <div class="glass-card breathing flex-1" style="animation-delay: 3s">
         <div class="card-header">
           <h2 class="card-title">Tech Stack</h2>
+          <p class="card-subtitle">Built with</p>
         </div>
         <div class="card-body">
           <div class="tech-list">
@@ -96,23 +107,30 @@ import Layout from '../layouts/Layout.astro';
       const container = document.getElementById('users-container');
       if (data.success && data.users.length > 0) {
         container.innerHTML = `
-          <ul class="item-list">
-            ${data.users.map((user) => `
-              <li class="list-item">
-                <div class="item-avatar">${user.name.charAt(0)}</div>
-                <div class="item-content">
-                  <div class="item-title">${user.name}</div>
-                  <div class="item-subtitle">${user.email}</div>
+          <div class="stats-bar">
+            <span class="stats-number">${data.users.length}</span>
+            <span class="stats-label">Total Users</span>
+          </div>
+          <ul class="user-list">
+            ${data.users.map((user: any) => `
+              <li class="user-item">
+                <div class="user-avatar">
+                  ${user.name.charAt(0)}
+                </div>
+                <div class="user-details">
+                  <div class="user-name">${user.name}</div>
+                  <div class="user-email">${user.email}</div>
+                  <div class="user-date">Joined ${new Date(user.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
                 </div>
               </li>
             `).join('')}
           </ul>
         `;
       } else {
-        container.innerHTML = '<p class="empty">No users found</p>';
+        container.innerHTML = '<div class="empty-state"><div class="empty-icon">👤</div><p>No users found</p></div>';
       }
     } catch (error) {
-      container.innerHTML = `<p class="error">Error: ${error}</p>`;
+      container.innerHTML = `<div class="error-state"><div class="error-icon">⚠️</div><p>Failed to load users</p></div>`;
     }
   }
 
@@ -124,22 +142,31 @@ import Layout from '../layouts/Layout.astro';
       const container = document.getElementById('posts-container');
       if (data.success && data.posts.length > 0) {
         container.innerHTML = `
-          <ul class="item-list">
-            ${data.posts.map((post) => `
-              <li class="list-item">
-                <div class="item-content">
-                  <div class="item-title">${post.title}</div>
-                  <div class="item-subtitle">${post.content.substring(0, 50)}...</div>
+          <div class="stats-bar">
+            <span class="stats-number">${data.posts.length}</span>
+            <span class="stats-label">Total Posts</span>
+          </div>
+          <ul class="post-list">
+            ${data.posts.map((post: any) => `
+              <li class="post-item">
+                <div class="post-number">#${post.id}</div>
+                <div class="post-content-wrapper">
+                  <h3 class="post-title">${post.title}</h3>
+                  <p class="post-excerpt">${post.content.substring(0, 80)}${post.content.length > 80 ? '...' : ''}</p>
+                  <div class="post-meta">
+                    <span class="post-author">By Author #${post.authorId}</span>
+                    <span class="post-date">${new Date(post.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                  </div>
                 </div>
               </li>
             `).join('')}
           </ul>
         `;
       } else {
-        container.innerHTML = '<p class="empty">No posts found</p>';
+        container.innerHTML = '<div class="empty-state"><div class="empty-icon">📝</div><p>No posts found</p></div>';
       }
     } catch (error) {
-      container.innerHTML = `<p class="error">Error: ${error}</p>`;
+      container.innerHTML = `<div class="error-state"><div class="error-icon">⚠️</div><p>Failed to load posts</p></div>`;
     }
   }
 
@@ -148,131 +175,303 @@ import Layout from '../layouts/Layout.astro';
 </script>
 
 <style>
+  /* Base Card Styles */
   .glass-card {
     position: relative;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
     overflow: hidden;
-    transition: all 0.3s ease;
-    min-height: 400px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    min-height: 480px;
   }
 
   .glass-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 
+      0 25px 50px -12px rgba(0, 0, 0, 0.4),
+      0 0 0 1px rgba(255, 255, 255, 0.1);
   }
 
   .breathing {
-    animation: breathe 3s ease-in-out infinite;
+    animation: breathe 4s ease-in-out infinite;
   }
 
   @keyframes breathe {
     0%, 100% {
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.1),
-                  0 0 40px rgba(255, 255, 255, 0.05),
-                  inset 0 0 20px rgba(255, 255, 255, 0.1);
+      box-shadow: 
+        0 0 30px rgba(255, 255, 255, 0.05),
+        inset 0 0 30px rgba(255, 255, 255, 0.05);
     }
     50% {
-      box-shadow: 0 0 30px rgba(255, 255, 255, 0.2),
-                  0 0 60px rgba(255, 255, 255, 0.1),
-                  inset 0 0 30px rgba(255, 255, 255, 0.2);
+      box-shadow: 
+        0 0 50px rgba(255, 255, 255, 0.15),
+        inset 0 0 40px rgba(255, 255, 255, 0.1);
     }
   }
 
+  /* Card Header */
   .card-header {
-    padding: 1.5rem 1.5rem 0.5rem;
+    padding: 1.75rem 1.75rem 1rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%);
   }
 
   .card-title {
-    font-size: 1.5rem;
-    font-weight: 700;
+    font-size: 1.75rem;
+    font-weight: 800;
     color: white;
     text-align: center;
+    letter-spacing: -0.025em;
+    margin-bottom: 0.25rem;
+    background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.8) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
+  .card-subtitle {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-align: center;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* Card Body */
   .card-body {
-    padding: 1rem 1.5rem 1.5rem;
-    max-height: 400px;
+    padding: 1.25rem 1.5rem 1.5rem;
+    max-height: 420px;
     overflow-y: auto;
   }
 
-  .item-list {
+  .card-body::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .card-body::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+  }
+
+  .card-body::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+  }
+
+  /* Stats Bar */
+  .stats-bar {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    margin-bottom: 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .stats-number {
+    font-size: 2rem;
+    font-weight: 800;
+    color: white;
+    line-height: 1;
+  }
+
+  .stats-label {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 500;
+  }
+
+  /* User List Styles */
+  .user-list {
     list-style: none;
     padding: 0;
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.875rem;
   }
 
-  .list-item {
+  .user-item {
     display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.2s ease;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all 0.3s ease;
   }
 
-  .list-item:hover {
-    background: rgba(255, 255, 255, 0.1);
-    transform: translateX(5px);
+  .user-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+    transform: translateX(4px);
   }
 
-  .item-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  .user-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1rem;
-    font-weight: bold;
+    font-size: 1.25rem;
+    font-weight: 700;
     color: white;
     flex-shrink: 0;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
   }
 
-  .item-content {
+  .user-details {
     flex: 1;
     min-width: 0;
   }
 
-  .item-title {
-    font-size: 0.95rem;
-    font-weight: 600;
+  .user-name {
+    font-size: 1.1rem;
+    font-weight: 700;
     color: white;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    margin-bottom: 0.25rem;
+    letter-spacing: -0.01em;
   }
 
-  .item-subtitle {
-    font-size: 0.8rem;
+  .user-email {
+    font-size: 0.875rem;
     color: rgba(255, 255, 255, 0.6);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    margin-bottom: 0.375rem;
+    font-weight: 400;
   }
 
-  .loading, .empty {
+  .user-date {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Post List Styles */
+  .post-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .post-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1.125rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all 0.3s ease;
+  }
+
+  .post-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+    transform: translateX(4px);
+  }
+
+  .post-number {
+    font-size: 0.875rem;
+    font-weight: 800;
+    color: rgba(255, 255, 255, 0.3);
+    font-family: monospace;
+    padding-top: 0.25rem;
+  }
+
+  .post-content-wrapper {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .post-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+  }
+
+  .post-excerpt {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.6);
+    line-height: 1.5;
+    margin-bottom: 0.75rem;
+  }
+
+  .post-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .post-author {
+    font-weight: 500;
+  }
+
+  .post-date {
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Empty & Error States */
+  .empty-state, .error-state {
+    text-align: center;
+    padding: 3rem 1.5rem;
+  }
+
+  .empty-icon, .error-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+  }
+
+  .empty-state p, .error-state p {
     color: rgba(255, 255, 255, 0.5);
-    text-align: center;
-    padding: 2rem;
-    font-style: italic;
+    font-size: 1rem;
   }
 
-  .error {
-    color: #ff6b6b;
-    text-align: center;
-    padding: 2rem;
+  /* Skeleton Loading */
+  .skeleton-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
   }
 
+  .skeleton-item {
+    height: 80px;
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.03) 25%,
+      rgba(255, 255, 255, 0.08) 50%,
+      rgba(255, 255, 255, 0.03) 75%
+    );
+    background-size: 200% 100%;
+    border-radius: 16px;
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* Shine Effect */
   .shine {
     position: absolute;
     top: -50%;
@@ -287,10 +486,11 @@ import Layout from '../layouts/Layout.astro';
     );
     transform: rotate(45deg);
     opacity: 0;
+    pointer-events: none;
   }
 
   .glass-card:hover .shine {
-    animation: shine 0.5s ease-in-out;
+    animation: shine 0.6s ease-in-out;
   }
 
   @keyframes shine {
@@ -311,23 +511,24 @@ import Layout from '../layouts/Layout.astro';
   .tech-list {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.875rem;
   }
 
   .tech-item {
     display: flex;
     align-items: center;
     gap: 1rem;
-    padding: 1rem;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.2s ease;
+    padding: 1rem 1.125rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all 0.3s ease;
   }
 
   .tech-item:hover {
-    background: rgba(255, 255, 255, 0.1);
-    transform: translateX(5px);
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+    transform: translateX(4px);
   }
 
   .tech-icon {
@@ -341,12 +542,14 @@ import Layout from '../layouts/Layout.astro';
 
   .tech-name {
     font-size: 1rem;
-    font-weight: 600;
+    font-weight: 700;
     color: white;
+    margin-bottom: 0.125rem;
   }
 
   .tech-desc {
     font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 500;
   }
 </style>
