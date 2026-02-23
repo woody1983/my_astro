@@ -110,17 +110,13 @@ import Layout from '../layouts/Layout.astro';
       const container = document.getElementById('users-container');
       if (data.success && data.users.length > 0) {
         container.innerHTML = `
-          <div class="stats-bar">
-            <span class="stats-number">${data.users.length}</span>
-            <span class="stats-label">Total Users</span>
-          </div>
-          <div class="user-grid">
+          <div class="user-list">
             ${data.users.map((user: any, index: number) => `
-              <div class="user-card-item">
-                <span class="user-emoji">${userEmojis[index % userEmojis.length]}</span>
+              <div class="user-item">
+                <span class="user-icon">${userEmojis[index % userEmojis.length]}</span>
                 <div class="user-info">
                   <div class="user-name">${user.name}</div>
-                  <div class="user-role">Member</div>
+                  <div class="user-email">${user.email}</div>
                 </div>
               </div>
             `).join('')}
@@ -286,14 +282,14 @@ import Layout from '../layouts/Layout.astro';
     font-weight: 500;
   }
 
-  /* User Grid Styles - Similar to Tech Stack */
-  .user-grid {
+  /* User List Styles - Match Tech Stack */
+  .user-list {
     display: flex;
     flex-direction: column;
     gap: 0.875rem;
   }
 
-  .user-card-item {
+  .user-item {
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -304,16 +300,15 @@ import Layout from '../layouts/Layout.astro';
     transition: all 0.3s ease;
   }
 
-  .user-card-item:hover {
+  .user-item:hover {
     background: rgba(255, 255, 255, 0.08);
     border-color: rgba(255, 255, 255, 0.15);
     transform: translateX(4px);
   }
 
-  .user-emoji {
-    font-size: 1.75rem;
+  .user-icon {
+    font-size: 1.5rem;
     flex-shrink: 0;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
   }
 
   .user-info {
@@ -327,7 +322,7 @@ import Layout from '../layouts/Layout.astro';
     margin-bottom: 0.125rem;
   }
 
-  .user-role {
+  .user-email {
     font-size: 0.8rem;
     color: rgba(255, 255, 255, 0.5);
     font-weight: 500;
