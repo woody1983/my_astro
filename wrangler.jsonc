@@ -1,0 +1,6 @@
+{
+  "name": "my-astro",
+  "compatibility_date": "2026-02-23",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "dist/_worker.js/index.js"
+}

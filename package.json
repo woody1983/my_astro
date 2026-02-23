@@ -8,7 +8,8 @@
     "build": "astro build",
     "build:prod": "NODE_ENV=production astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "deploy": "wrangler pages deploy dist"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.12",
