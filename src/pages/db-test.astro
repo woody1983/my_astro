@@ -1,147 +1,165 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
+import { getDb } from "../db/index";
+import { users, posts } from "../db/schema";
+import { eq } from "drizzle-orm";
+
+// 从 D1 动态查询数据
+const runtime = Astro.locals.runtime;
+const db = getDb(runtime.env.DB);
+
+const allUsers = await db.select().from(users);
+const allPosts = await db
+  .select({
+    id: posts.id,
+    title: posts.title,
+    content: posts.content,
+    authorId: posts.authorId,
+    authorName: users.name,
+  })
+  .from(posts)
+  .leftJoin(users, eq(posts.authorId, users.id));
+
+const userIcons = ["👩‍💼", "👨‍💻", "👩‍🎨", "👨‍🔬", "👩‍🚀", "👨‍🎤", "👩‍⚕️", "👨‍🏫"];
+const postIcons = ["📝", "📄", "📃", "📑", "📋", "📰", "📓", "📖"];
 ---
 
 <Layout title="D1 Database Test Page">
-  <div class="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 flex items-center justify-center p-8">
+  <div
+    class="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 flex items-center justify-center p-8"
+  >
     <div class="flex flex-col gap-8 max-w-6xl w-full">
-      <h1 class="text-4xl font-bold text-white text-center mb-4">Astro with Drizzle</h1>
+      <h1 class="text-4xl font-bold text-white text-center mb-4">
+        Astro with Drizzle
+      </h1>
       <div class="flex flex-col md:flex-row gap-8">
-      
-      <!-- Users Card -->
-      <div class="glass-card breathing flex-1">
-        <div class="card-header">
-          <h2 class="card-title">Users List</h2>
-          <p class="card-subtitle">Registered members</p>
+        <!-- Users Card -->
+        <div class="glass-card breathing flex-1">
+          <div class="card-header">
+            <h2 class="card-title">Users List</h2>
+            <p class="card-subtitle">Registered members ({allUsers.length})</p>
+          </div>
+          <div class="card-body">
+            <div class="tech-list">
+              {
+                allUsers.map((user, i) => (
+                  <div class="tech-item">
+                    <span class="tech-icon">
+                      {userIcons[i % userIcons.length]}
+                    </span>
+                    <div class="tech-info">
+                      <div class="tech-name">{user.name}</div>
+                      <div class="tech-desc">📧 {user.email}</div>
+                    </div>
+                  </div>
+                ))
+              }
+              {
+                allUsers.length === 0 && (
+                  <div class="tech-item">
+                    <span class="tech-icon">🚫</span>
+                    <div class="tech-info">
+                      <div class="tech-name">No users found</div>
+                      <div class="tech-desc">Database is empty</div>
+                    </div>
+                  </div>
+                )
+              }
+            </div>
+          </div>
+          <div class="shine"></div>
         </div>
-        <div class="card-body">
-          <div class="tech-list">
-            <div class="tech-item">
-              <span class="tech-icon">👩‍💼</span>
-              <div class="tech-info">
-                <div class="tech-name">Alice Johnson</div>
-                <div class="tech-desc">📧 alice@example.com</div>
-              </div>
+
+        <!-- Posts Card -->
+        <div class="glass-card breathing flex-1" style="animation-delay: 1.5s">
+          <div class="card-header">
+            <h2 class="card-title">Posts List</h2>
+            <p class="card-subtitle">Latest articles ({allPosts.length})</p>
+          </div>
+          <div class="card-body">
+            <div class="tech-list">
+              {
+                allPosts.map((post, i) => (
+                  <div class="tech-item">
+                    <span class="tech-icon">
+                      {postIcons[i % postIcons.length]}
+                    </span>
+                    <div class="tech-info">
+                      <div class="tech-name">{post.title}</div>
+                      <div class="tech-desc">
+                        ✍️ By {post.authorName || "Unknown"}
+                      </div>
+                    </div>
+                  </div>
+                ))
+              }
+              {
+                allPosts.length === 0 && (
+                  <div class="tech-item">
+                    <span class="tech-icon">🚫</span>
+                    <div class="tech-info">
+                      <div class="tech-name">No posts found</div>
+                      <div class="tech-desc">Database is empty</div>
+                    </div>
+                  </div>
+                )
+              }
             </div>
-            <div class="tech-item">
-              <span class="tech-icon">👨‍💻</span>
-              <div class="tech-info">
-                <div class="tech-name">Bob Smith</div>
-                <div class="tech-desc">📧 bob@example.com</div>
+          </div>
+          <div class="shine"></div>
+        </div>
+
+        <!-- Tech Stack Card -->
+        <div class="glass-card breathing flex-1" style="animation-delay: 3s">
+          <div class="card-header">
+            <h2 class="card-title">Tech Stack</h2>
+            <p class="card-subtitle">Built with</p>
+          </div>
+          <div class="card-body">
+            <div class="tech-list">
+              <div class="tech-item">
+                <span class="tech-icon">🚀</span>
+                <div class="tech-info">
+                  <div class="tech-name">Astro</div>
+                  <div class="tech-desc">Web Framework</div>
+                </div>
               </div>
-            </div>
-            <div class="tech-item">
-              <span class="tech-icon">👩‍🎨</span>
-              <div class="tech-info">
-                <div class="tech-name">Charlie Brown</div>
-                <div class="tech-desc">📧 charlie@example.com</div>
+
+              <div class="tech-item">
+                <span class="tech-icon">⚡</span>
+                <div class="tech-info">
+                  <div class="tech-name">Tailwind CSS</div>
+                  <div class="tech-desc">Styling</div>
+                </div>
               </div>
-            </div>
-            <div class="tech-item">
-              <span class="tech-icon">👨‍🔬</span>
-              <div class="tech-info">
-                <div class="tech-name">Jiang Xu</div>
-                <div class="tech-desc">📧 jiang@example.com</div>
+
+              <div class="tech-item">
+                <span class="tech-icon">🗄️</span>
+                <div class="tech-info">
+                  <div class="tech-name">Drizzle ORM</div>
+                  <div class="tech-desc">Database</div>
+                </div>
+              </div>
+
+              <div class="tech-item">
+                <span class="tech-icon">☁️</span>
+                <div class="tech-info">
+                  <div class="tech-name">Cloudflare D1</div>
+                  <div class="tech-desc">Edge Database</div>
+                </div>
+              </div>
+
+              <div class="tech-item">
+                <span class="tech-icon">📦</span>
+                <div class="tech-info">
+                  <div class="tech-name">TypeScript</div>
+                  <div class="tech-desc">Language</div>
+                </div>
               </div>
             </div>
           </div>
+          <div class="shine"></div>
         </div>
-        <div class="shine"></div>
-      </div>
-
-      <!-- Posts Card -->
-      <div class="glass-card breathing flex-1" style="animation-delay: 1.5s">
-        <div class="card-header">
-          <h2 class="card-title">Posts List</h2>
-          <p class="card-subtitle">Latest articles</p>
-        </div>
-        <div class="card-body">
-          <div class="tech-list">
-            <div class="tech-item">
-              <span class="tech-icon">📝</span>
-              <div class="tech-info">
-                <div class="tech-name">My First Blog Post</div>
-                <div class="tech-desc">✍️ By Alice Johnson</div>
-              </div>
-            </div>
-            <div class="tech-item">
-              <span class="tech-icon">📄</span>
-              <div class="tech-info">
-                <div class="tech-name">D1 Database Experience</div>
-                <div class="tech-desc">✍️ By Bob Smith</div>
-              </div>
-            </div>
-            <div class="tech-item">
-              <span class="tech-icon">📃</span>
-              <div class="tech-info">
-                <div class="tech-name">Introduction to Astro</div>
-                <div class="tech-desc">✍️ By Alice Johnson</div>
-              </div>
-            </div>
-            <div class="tech-item">
-              <span class="tech-icon">📑</span>
-              <div class="tech-info">
-                <div class="tech-name">The Future of Edge Computing</div>
-                <div class="tech-desc">✍️ By Charlie Brown</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="shine"></div>
-      </div>
-
-      <!-- Tech Stack Card -->
-      <div class="glass-card breathing flex-1" style="animation-delay: 3s">
-        <div class="card-header">
-          <h2 class="card-title">Tech Stack</h2>
-          <p class="card-subtitle">Built with</p>
-        </div>
-        <div class="card-body">
-          <div class="tech-list">
-            <div class="tech-item">
-              <span class="tech-icon">🚀</span>
-              <div class="tech-info">
-                <div class="tech-name">Astro</div>
-                <div class="tech-desc">Web Framework</div>
-              </div>
-            </div>
-            
-            <div class="tech-item">
-              <span class="tech-icon">⚡</span>
-              <div class="tech-info">
-                <div class="tech-name">Tailwind CSS</div>
-                <div class="tech-desc">Styling</div>
-              </div>
-            </div>
-            
-            <div class="tech-item">
-              <span class="tech-icon">🗄️</span>
-              <div class="tech-info">
-                <div class="tech-name">Drizzle ORM</div>
-                <div class="tech-desc">Database</div>
-              </div>
-            </div>
-            
-            <div class="tech-item">
-              <span class="tech-icon">☁️</span>
-              <div class="tech-info">
-                <div class="tech-name">Cloudflare D1</div>
-                <div class="tech-desc">Edge Database</div>
-              </div>
-            </div>
-            
-            <div class="tech-item">
-              <span class="tech-icon">📦</span>
-              <div class="tech-info">
-                <div class="tech-name">TypeScript</div>
-                <div class="tech-desc">Language</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="shine"></div>
-      </div>
-
       </div>
     </div>
   </div>
@@ -161,7 +179,8 @@ import Layout from '../layouts/Layout.astro';
 
   .glass-card:hover {
     transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4),
+      0 0 0 1px rgba(255, 255, 255, 0.1);
   }
 
   .breathing {
@@ -169,18 +188,25 @@ import Layout from '../layouts/Layout.astro';
   }
 
   @keyframes breathe {
-    0%, 100% {
-      box-shadow: 0 0 30px rgba(255, 255, 255, 0.05), inset 0 0 30px rgba(255, 255, 255, 0.05);
+    0%,
+    100% {
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.05),
+        inset 0 0 30px rgba(255, 255, 255, 0.05);
     }
     50% {
-      box-shadow: 0 0 50px rgba(255, 255, 255, 0.15), inset 0 0 40px rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 50px rgba(255, 255, 255, 0.15),
+        inset 0 0 40px rgba(255, 255, 255, 0.1);
     }
   }
 
   .card-header {
     padding: 1.75rem 1.75rem 1rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%);
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.05) 0%,
+      transparent 100%
+    );
   }
 
   .card-title {
@@ -190,7 +216,7 @@ import Layout from '../layouts/Layout.astro';
     text-align: center;
     letter-spacing: -0.025em;
     margin-bottom: 0.25rem;
-    background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.8) 100%);
+    background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.8) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -262,7 +288,12 @@ import Layout from '../layouts/Layout.astro';
     left: -50%;
     width: 200%;
     height: 200%;
-    background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+    background: linear-gradient(
+      45deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.1) 50%,
+      transparent 70%
+    );
     transform: rotate(45deg);
     opacity: 0;
     pointer-events: none;
@@ -273,8 +304,16 @@ import Layout from '../layouts/Layout.astro';
   }
 
   @keyframes shine {
-    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); opacity: 0; }
-    50% { opacity: 1; }
-    100% { transform: translateX(100%) translateY(100%) rotate(45deg); opacity: 0; }
+    0% {
+      transform: translateX(-100%) translateY(-100%) rotate(45deg);
+      opacity: 0;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(100%) translateY(100%) rotate(45deg);
+      opacity: 0;
+    }
   }
 </style>
