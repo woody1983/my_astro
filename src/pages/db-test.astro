@@ -1,0 +1,199 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="D1 Database Test Page">
+  <main class="container">
+    <h1>D1 Database Test Page</h1>
+    
+    <section class="section">
+      <h2>Users List</h2>
+      <div id="users-container">
+        <p class="loading">Loading users...</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Posts List</h2>
+      <div id="posts-container">
+        <p class="loading">Loading posts...</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>API Test</h2>
+      <div class="api-tests">
+        <button id="addUserBtn" class="btn">Add Test User</button>
+        <button id="addPostBtn" class="btn">Add Test Post</button>
+        <div id="result"></div>
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<script>
+  // Fetch users from API
+  async function loadUsers() {
+    try {
+      const response = await fetch('/api/get-users');
+      const data = await response.json();
+      
+      const container = document.getElementById('users-container');
+      if (data.success && data.users.length > 0) {
+        container!.innerHTML = `
+          <ul class="list">
+            ${data.users.map((user: any) => `
+              <li class="item">
+                <strong>${user.name}</strong> - ${user.email}
+                <br />
+                <small>Created: ${new Date(user.createdAt).toLocaleString()}</small>
+              </li>
+            `).join('')}
+          </ul>
+        `;
+      } else {
+        container!.innerHTML = '<p class="empty">No users found</p>';
+      }
+    } catch (error) {
+      document.getElementById('users-container')!.innerHTML = `<p class="error">Error loading users: ${error}</p>`;
+    }
+  }
+
+  // Fetch posts from API
+  async function loadPosts() {
+    try {
+      const response = await fetch('/api/get-posts');
+      const data = await response.json();
+      
+      const container = document.getElementById('posts-container');
+      if (data.success && data.posts.length > 0) {
+        container!.innerHTML = `
+          <ul class="list">
+            ${data.posts.map((post: any) => `
+              <li class="item">
+                <h3>${post.title}</h3>
+                <p>${post.content}</p>
+                <small>Author ID: ${post.authorId} | Created: ${new Date(post.createdAt).toLocaleString()}</small>
+              </li>
+            `).join('')}
+          </ul>
+        `;
+      } else {
+        container!.innerHTML = '<p class="empty">No posts found</p>';
+      }
+    } catch (error) {
+      document.getElementById('posts-container')!.innerHTML = `<p class="error">Error loading posts: ${error}</p>`;
+    }
+  }
+
+  // Load data on page load
+  loadUsers();
+  loadPosts();
+
+  // Add user button
+  document.getElementById('addUserBtn')?.addEventListener('click', async () => {
+    const resultDiv = document.getElementById('result');
+    try {
+      const response = await fetch('/api/test-db', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'addUser' })
+      });
+      const data = await response.json();
+      resultDiv!.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+      if (data.success) {
+        loadUsers();
+      }
+    } catch (error) {
+      resultDiv!.innerHTML = `<p class="error">Error: ${error}</p>`;
+    }
+  });
+
+  // Add post button
+  document.getElementById('addPostBtn')?.addEventListener('click', async () => {
+    const resultDiv = document.getElementById('result');
+    try {
+      const response = await fetch('/api/test-db', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'addPost' })
+      });
+      const data = await response.json();
+      resultDiv!.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+      if (data.success) {
+        loadPosts();
+      }
+    } catch (error) {
+      resultDiv!.innerHTML = `<p class="error">Error: ${error}</p>`;
+    }
+  });
+</script>
+
+<style>
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  h1 {
+    color: #333;
+    border-bottom: 2px solid #007acc;
+    padding-bottom: 0.5rem;
+  }
+  
+  .section {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: #f5f5f5;
+    border-radius: 8px;
+  }
+  
+  .list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .item {
+    background: white;
+    padding: 1rem;
+    margin: 0.5rem 0;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .empty, .loading {
+    color: #666;
+    font-style: italic;
+  }
+  
+  .btn {
+    background: #007acc;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    margin: 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+  
+  .btn:hover {
+    background: #005fa3;
+  }
+  
+  .api-tests {
+    margin-top: 1rem;
+  }
+  
+  #result {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #e8e8e8;
+    border-radius: 4px;
+  }
+  
+  .error {
+    color: #d32f2f;
+  }
+</style>
