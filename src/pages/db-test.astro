@@ -3,29 +3,40 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout title="D1 Database Test Page">
-  <main class="container">
-    <h1>D1 Database Test Page</h1>
-    
-    <section class="section">
-      <h2>Users List</h2>
-      <div id="users-container">
-        <p class="loading">Loading users...</p>
+  <div class="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 flex items-center justify-center p-8">
+    <div class="flex flex-col md:flex-row gap-8 max-w-5xl w-full">
+      
+      <!-- Users Card -->
+      <div class="glass-card breathing flex-1">
+        <div class="card-header">
+          <h2 class="card-title">Users List</h2>
+        </div>
+        <div class="card-body">
+          <div id="users-container">
+            <p class="loading">Loading users...</p>
+          </div>
+        </div>
+        <div class="shine"></div>
       </div>
-    </section>
 
-    <section class="section">
-      <h2>Posts List</h2>
-      <div id="posts-container">
-        <p class="loading">Loading posts...</p>
+      <!-- Posts Card -->
+      <div class="glass-card breathing flex-1" style="animation-delay: 1.5s">
+        <div class="card-header">
+          <h2 class="card-title">Posts List</h2>
+        </div>
+        <div class="card-body">
+          <div id="posts-container">
+            <p class="loading">Loading posts...</p>
+          </div>
+        </div>
+        <div class="shine"></div>
       </div>
-    </section>
 
-
-  </main>
+    </div>
+  </div>
 </Layout>
 
 <script>
-  // Fetch users from API
   async function loadUsers() {
     try {
       const response = await fetch('/api/get-users');
@@ -33,26 +44,27 @@ import Layout from '../layouts/Layout.astro';
       
       const container = document.getElementById('users-container');
       if (data.success && data.users.length > 0) {
-        container!.innerHTML = `
-          <ul class="list">
-            ${data.users.map((user: any) => `
-              <li class="item">
-                <strong>${user.name}</strong> - ${user.email}
-                <br />
-                <small>Created: ${new Date(user.createdAt).toLocaleString()}</small>
+        container.innerHTML = `
+          <ul class="item-list">
+            ${data.users.map((user) => `
+              <li class="list-item">
+                <div class="item-avatar">${user.name.charAt(0)}</div>
+                <div class="item-content">
+                  <div class="item-title">${user.name}</div>
+                  <div class="item-subtitle">${user.email}</div>
+                </div>
               </li>
             `).join('')}
           </ul>
         `;
       } else {
-        container!.innerHTML = '<p class="empty">No users found</p>';
+        container.innerHTML = '<p class="empty">No users found</p>';
       }
     } catch (error) {
-      document.getElementById('users-container')!.innerHTML = `<p class="error">Error loading users: ${error}</p>`;
+      container.innerHTML = `<p class="error">Error: ${error}</p>`;
     }
   }
 
-  // Fetch posts from API
   async function loadPosts() {
     try {
       const response = await fetch('/api/get-posts');
@@ -60,69 +72,194 @@ import Layout from '../layouts/Layout.astro';
       
       const container = document.getElementById('posts-container');
       if (data.success && data.posts.length > 0) {
-        container!.innerHTML = `
-          <ul class="list">
-            ${data.posts.map((post: any) => `
-              <li class="item">
-                <h3>${post.title}</h3>
-                <p>${post.content}</p>
-                <small>Author ID: ${post.authorId} | Created: ${new Date(post.createdAt).toLocaleString()}</small>
+        container.innerHTML = `
+          <ul class="item-list">
+            ${data.posts.map((post) => `
+              <li class="list-item">
+                <div class="item-content">
+                  <div class="item-title">${post.title}</div>
+                  <div class="item-subtitle">${post.content.substring(0, 50)}...</div>
+                </div>
               </li>
             `).join('')}
           </ul>
         `;
       } else {
-        container!.innerHTML = '<p class="empty">No posts found</p>';
+        container.innerHTML = '<p class="empty">No posts found</p>';
       }
     } catch (error) {
-      document.getElementById('posts-container')!.innerHTML = `<p class="error">Error loading posts: ${error}</p>`;
+      container.innerHTML = `<p class="error">Error: ${error}</p>`;
     }
   }
 
-  // Load data on page load
   loadUsers();
   loadPosts();
 </script>
 
 <style>
-  .container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 2rem;
+  /* Glass Card */
+  .glass-card {
+    position: relative;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    min-height: 400px;
   }
-  
-  h1 {
-    color: #333;
-    border-bottom: 2px solid #007acc;
-    padding-bottom: 0.5rem;
+
+  .glass-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   }
-  
-  .section {
-    margin: 2rem 0;
-    padding: 1.5rem;
-    background: #f5f5f5;
-    border-radius: 8px;
+
+  /* Breathing Animation */
+  .breathing {
+    animation: breathe 3s ease-in-out infinite;
   }
-  
-  .list {
+
+  @keyframes breathe {
+    0%, 100% {
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.1),
+                  0 0 40px rgba(255, 255, 255, 0.05),
+                  inset 0 0 20px rgba(255, 255, 255, 0.1);
+    }
+    50% {
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.2),
+                  0 0 60px rgba(255, 255, 255, 0.1),
+                  inset 0 0 30px rgba(255, 255, 255, 0.2);
+    }
+  }
+
+  /* Card Header */
+  .card-header {
+    padding: 1.5rem 1.5rem 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .card-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    text-align: center;
+  }
+
+  /* Card Body */
+  .card-body {
+    padding: 1rem 1.5rem 1.5rem;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  /* List Styles */
+  .item-list {
     list-style: none;
     padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
   }
-  
-  .item {
-    background: white;
-    padding: 1rem;
-    margin: 0.5rem 0;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+  .list-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.2s ease;
   }
-  
-  .empty, .loading {
-    color: #666;
+
+  .list-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px);
+  }
+
+  .item-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: bold;
+    color: white;
+    flex-shrink: 0;
+  }
+
+  .item-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .item-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: white;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .item-subtitle {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* States */
+  .loading, .empty {
+    color: rgba(255, 255, 255, 0.5);
+    text-align: center;
+    padding: 2rem;
     font-style: italic;
   }
-  
+
   .error {
-    color: #d32f2f;
+    color: #ff6b6b;
+    text-align: center;
+    padding: 2rem;
+  }
+
+  /* Shine Effect */
+  .shine {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      45deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.1) 50%,
+      transparent 70%
+    );
+    transform: rotate(45deg);
+    opacity: 0;
+  }
+
+  .glass-card:hover .shine {
+    animation: shine 0.5s ease-in-out;
+  }
+
+  @keyframes shine {
+    0% {
+      transform: translateX(-100%) translateY(-100%) rotate(45deg);
+      opacity: 0;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(100%) translateY(100%) rotate(45deg);
+      opacity: 0;
+    }
   }
 </style>

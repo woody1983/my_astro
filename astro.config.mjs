@@ -13,6 +13,9 @@ const configPath = isProd
 export default defineConfig({
   output: 'server',
   integrations: [tailwind()],
+  devToolbar: {
+    enabled: false
+  },
   adapter: cloudflare({
     platformProxy: {
       enabled: true,
